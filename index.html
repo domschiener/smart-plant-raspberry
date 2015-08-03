@@ -7,11 +7,11 @@
 		<link rel="stylesheet" href="css/bootstrap.min.css">
 		<link rel="stylesheet" href="css/style.css">
 
-		<!-- JAVASCRIPT & SIMILAR LIBRARIES -->
+		<!-- JS & BOOTSTRAP -->
 		<script src="js/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
-	    <script src="js/d3.min.js" language="JavaScript"></script>
-	    <script src="js/scripts.js" language="JavaScript"></script>
+		<script src="js/d3.min.js" language="JavaScript"></script>
+		<script src="js/scripts.js" language="JavaScript"></script>
 
 		<title>My Plant's Data</title>
 	</head>
@@ -141,7 +141,6 @@
 				config1.textVertPosition = 0.2;
 				config1.waveAnimateTime = 1000;
 
-
 				/*
 				 * D3.JS HEATMAP
 				 */
@@ -151,7 +150,7 @@
 				  gridSize = Math.floor(width / 24),
 				  legendElementWidth = gridSize*2,
 				  buckets = 8,
-				  colors = ["#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"], // alternatively colorbrewer.YlGnBu[9]
+				  colors = ["#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"],
 				  days = genlast7days(dataset[dataset.length-1].weekday),
 				  times = ["1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", "12am", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm", "12pm"];
 
@@ -237,7 +236,5 @@
 
 		});
 		</script>
-
-
 	</body>
 </html>
