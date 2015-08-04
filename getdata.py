@@ -53,5 +53,4 @@ class collectData(object):
             with open('data.csv', 'a') as out:
                 fileWriter = csv.writer(out, delimiter= ',')
                 fileWriter.writerow([self.adcOut, self.percent, self.date, self.time, self.weekday])
-                time.sleep(1800)
-       
+            time.sleep(1800)
