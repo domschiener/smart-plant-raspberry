@@ -1,240 +1,240 @@
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
-	<head>
+    <head>
 
-		<!-- CSS FILES -->
-		<link rel="stylesheet" href="css/bootstrap.min.css">
-		<link rel="stylesheet" href="css/style.css">
+        <!-- CSS FILES -->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/style.css">
 
-		<!-- JS & BOOTSTRAP -->
-		<script src="js/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
-		<script src="js/d3.min.js" language="JavaScript"></script>
-		<script src="js/scripts.js" language="JavaScript"></script>
+        <!-- JS & BOOTSTRAP -->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/d3.min.js" language="JavaScript"></script>
+        <script src="js/scripts.js" language="JavaScript"></script>
 
-		<title>My Plant's Data</title>
-	</head>
+        <title>My Plant's Data</title>
+    </head>
 
-	<body>
-		<!-- NAVBAR HEADER OF THE PAGE, 3 COLUMNS -->
-		<nav class="navbar navbar-default" role="navigation">
-		    <div class="col-md-4"><a class="navbar-brand" href="#">Smart Plant Panel</a></div>
-		    <div class="col-md-4"></div>
-		    <div class="col-md-4"><button id="script_run" type="button" class="btn btn-primary" onclick="runscript()">None</button></div>
-		</nav>
+    <body>
+        <!-- NAVBAR HEADER OF THE PAGE, 3 COLUMNS -->
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="col-md-4"><a class="navbar-brand" href="#">Smart Plant Panel</a></div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4"><button id="script_run" type="button" class="btn btn-primary" onclick="runscript()">None</button></div>
+        </nav>
 
-		<!-- QUICK OVERVIEW -->
-		<div class="container">
-			<!-- SHORT INFORMATION ON DATA -->
-			<div class="col-md-6 col-border short-info">
-				<h1>Overview</h1> 
-				<br>
-				<p class="overview-display"><strong>Plant Status: </strong><button id="plant_status" type="button" class="btn btn-primary">Test</button></p>
-				<p class="overview-display"><strong>Current Moisture Level: </strong><span id="last_moisture"></span></p>
-				<p class="overview-display"><strong>Last Watered: </strong><span id="last_watered"></span></p>
-				<br>
-				<p class="overview-display"><strong>Last Measured: </strong><span id="last_date"></span></p>
-				<p class="overview-display"><strong>Total # Data: </strong><span id="dataset_len"></span></p>
-				<h4></h4>
-			</div>
+        <!-- QUICK OVERVIEW -->
+        <div class="container">
+            <!-- SHORT INFORMATION ON DATA -->
+            <div class="col-md-6 col-border short-info">
+                <h1>Overview</h1> 
+                <br>
+                <p class="overview-display"><strong>Plant Status: </strong><button id="plant_status" type="button" class="btn btn-primary">Test</button></p>
+                <p class="overview-display"><strong>Current Moisture Level: </strong><span id="last_moisture"></span></p>
+                <p class="overview-display"><strong>Last Watered: </strong><span id="last_watered"></span></p>
+                <br>
+                <p class="overview-display"><strong>Last Measured: </strong><span id="last_date"></span></p>
+                <p class="overview-display"><strong>Total # Data: </strong><span id="dataset_len"></span></p>
+                <h4></h4>
+            </div>
 
-			<!-- WATER LEVELS -->
-			<div class="col-md-6 col-border short-info">
-				<h1><center>Water Levels</center></h1>
-				<svg id="fillgauge1" width="97%" height="250"></svg>
-			</div>
-		</div>
+            <!-- WATER LEVELS -->
+            <div class="col-md-6 col-border short-info">
+                <h1><center>Water Levels</center></h1>
+                <svg id="fillgauge1" width="97%" height="250"></svg>
+            </div>
+        </div>
 
-		<!-- HISTORICAL OVERVIEW HEATMAP -->
-		<div class="container">
-			<div class="col-md-12 col-border">
-				<h1><center>Historical Data</center></h1>
-				<center><div id="chart"></div></center>
-			</div>
-		</div>
+        <!-- HISTORICAL OVERVIEW HEATMAP -->
+        <div class="container">
+            <div class="col-md-12 col-border">
+                <h1><center>Historical Data</center></h1>
+                <center><div id="chart"></div></center>
+            </div>
+        </div>
 
-		<script language="JavaScript">
+        <script language="JavaScript">
 
-			//changes the layout of the button so the user knows if the script is currently running or not
-			function changebutton() {
-				$.ajax({
-					url: "RUNNING.txt",
-					error: function() {
-						document.getElementById('script_run').className = "btn btn-danger";
-						document.getElementById('script_run').innerHTML = "OFFLINE";
-					},
-					success: function() {
-						document.getElementById('script_run').className = "btn btn-success";
-						document.getElementById('script_run').innerHTML = "ONLINE";
-					}
-				});
-			}
-			changebutton();
+            //changes the layout of the button so the user knows if the script is currently running or not
+            function changebutton() {
+                $.ajax({
+                    url: "RUNNING.txt",
+                    error: function() {
+                        document.getElementById('script_run').className = "btn btn-danger";
+                        document.getElementById('script_run').innerHTML = "OFFLINE";
+                    },
+                    success: function() {
+                        document.getElementById('script_run').className = "btn btn-success";
+                        document.getElementById('script_run').innerHTML = "ONLINE";
+                    }
+                });
+            }
+            changebutton();
 
-			//makes an Ajax call to main.py to initiate or terminate the processes
-			function runscript() {
-				if (document.getElementById('script_run').innerHTML == "ONLINE") {
-					$.ajax({
-						type: "POST",
-						url: 'main.py',
-						data: {offline: "True"}
-					})
-					.done(setTimeout(function(){
-						changebutton();
-					}, 30000));
-				}
-				else {
-					$.ajax({
-						url: 'main.py'
-					})
-					.done(setTimeout(function(){
-						changebutton();
-					}, 50000));
-				}
-			};
-			//loading in the data from data.csv and converting to numbers
-			//replace with data.csv once you have your setup ready
-			d3.csv('test.csv', function(error, dataset) {
-				dataset.forEach(function(d) {
-					//convert our values into integers
-					d.moisture = +d.moisture;
-					d.perc = +d.perc;
-					d.weekday = +d.weekday;
-				});
-				
-				//assigning the value to our variables
-				var last_perc = dataset[dataset.length-1].perc;
-				var last_moisture = dataset[dataset.length-1].moisture;
-				var last_date = dataset[dataset.length-1].date;
-				var last_time = dataset[dataset.length-1].time;
-				var last_watered = lastWatered(dataset);
+            //makes an Ajax call to main.py to initiate or terminate the processes
+            function runscript() {
+                if (document.getElementById('script_run').innerHTML == "ONLINE") {
+                    $.ajax({
+                        type: "POST",
+                        url: 'main.py',
+                        data: {offline: "True"}
+                    })
+                    .done(setTimeout(function(){
+                        changebutton();
+                    }, 30000));
+                }
+                else {
+                    $.ajax({
+                        url: 'main.py'
+                    })
+                    .done(setTimeout(function(){
+                        changebutton();
+                    }, 50000));
+                }
+            };
+            //loading in the data from data.csv and converting to numbers
+            //replace with data.csv once you have your setup ready
+            d3.csv('test.csv', function(error, dataset) {
+                dataset.forEach(function(d) {
+                    //convert our values into integers
+                    d.moisture = +d.moisture;
+                    d.perc = +d.perc;
+                    d.weekday = +d.weekday;
+                });
+                
+                //assigning the value to our variables
+                var last_perc = dataset[dataset.length-1].perc;
+                var last_moisture = dataset[dataset.length-1].moisture;
+                var last_date = dataset[dataset.length-1].date;
+                var last_time = dataset[dataset.length-1].time;
+                var last_watered = lastWatered(dataset);
 
-				//update the Plant Status, the conditions were chosen rather arbitrarily 
-				if (last_perc > 45) {
-					document.getElementById('plant_status').className = 'btn btn-success';
-					document.getElementById('plant_status').innerHTML = 'Perfect';
-				} else if (last_perc > 30) {
-					document.getElementById('plant_status').className = 'btn btn-warning';
-					document.getElementById('plant_status').innerHTML = 'OK';
-				} else {
-					document.getElementById('plant_status').className = 'btn btn-danger';
-					document.getElementById('plant_status').innerHTML = 'BAD';
-				}
+                //update the Plant Status, the conditions were chosen rather arbitrarily 
+                if (last_perc > 45) {
+                    document.getElementById('plant_status').className = 'btn btn-success';
+                    document.getElementById('plant_status').innerHTML = 'Perfect';
+                } else if (last_perc > 30) {
+                    document.getElementById('plant_status').className = 'btn btn-warning';
+                    document.getElementById('plant_status').innerHTML = 'OK';
+                } else {
+                    document.getElementById('plant_status').className = 'btn btn-danger';
+                    document.getElementById('plant_status').innerHTML = 'BAD';
+                }
 
-				//assign the right values to the Overview 
-				document.getElementById('last_moisture').innerHTML = last_moisture;
-				document.getElementById('last_watered').innerHTML = last_watered;
-				document.getElementById('last_date').innerHTML = last_date + ' ' + last_time;
-				document.getElementById('dataset_len').innerHTML = dataset.length;
+                //assign the right values to the Overview 
+                document.getElementById('last_moisture').innerHTML = last_moisture;
+                document.getElementById('last_watered').innerHTML = last_watered;
+                document.getElementById('last_date').innerHTML = last_date + ' ' + last_time;
+                document.getElementById('dataset_len').innerHTML = dataset.length;
 
-				/*
-				 * D3.JS WATER GAUGE
-				 */ 
-				var gauge1 = loadLiquidFillGauge('fillgauge1', last_perc);
-				var config1 = liquidFillGaugeDefaultSettings();
-				config1.circleColor = '#FF7777';
-				config1.textColor = '#FF4444';
-				config1.waveTextColor = '#FFAAAA';
-				config1.waveColor = '#FFDDDD';
-				config1.circleThickness = 0.2;
-				config1.textVertPosition = 0.2;
-				config1.waveAnimateTime = 1000;
+                /*
+                 * D3.JS WATER GAUGE
+                 */ 
+                var gauge1 = loadLiquidFillGauge('fillgauge1', last_perc);
+                var config1 = liquidFillGaugeDefaultSettings();
+                config1.circleColor = '#FF7777';
+                config1.textColor = '#FF4444';
+                config1.waveTextColor = '#FFAAAA';
+                config1.waveColor = '#FFDDDD';
+                config1.circleThickness = 0.2;
+                config1.textVertPosition = 0.2;
+                config1.waveAnimateTime = 1000;
 
-				/*
-				 * D3.JS HEATMAP
-				 */
-				var margin = { top: 50, right: 0, bottom: 100, left: 30 },
-				  width = 960 - margin.left - margin.right,
-				  height = 430 - margin.top - margin.bottom,
-				  gridSize = Math.floor(width / 24),
-				  legendElementWidth = gridSize*2,
-				  buckets = 8,
-				  colors = ["#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"],
-				  days = genlast7days(dataset[dataset.length-1].weekday),
-				  times = ["1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", "12am", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm", "12pm"];
+                /*
+                 * D3.JS HEATMAP
+                 */
+                var margin = { top: 50, right: 0, bottom: 100, left: 30 },
+                  width = 960 - margin.left - margin.right,
+                  height = 430 - margin.top - margin.bottom,
+                  gridSize = Math.floor(width / 24),
+                  legendElementWidth = gridSize*2,
+                  buckets = 8,
+                  colors = ["#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"],
+                  days = genlast7days(dataset[dataset.length-1].weekday),
+                  times = ["1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", "12am", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm", "12pm"];
 
-				var lastweekdata = genlast7data(dataset);
-				var emptyobj = genemptyobj(dataset);
+                var lastweekdata = genlast7data(dataset);
+                var emptyobj = genemptyobj(dataset);
 
-				var colorScale = d3.scale.quantile()
-					.domain([320, 650, d3.max(lastweekdata, function (d) { return d.moisture; })])
-					.range(colors);
+                var colorScale = d3.scale.quantile()
+                    .domain([320, 650, d3.max(lastweekdata, function (d) { return d.moisture; })])
+                    .range(colors);
 
-				var svg = d3.select("#chart").append("svg")
-					.attr("width", width + margin.left + margin.right)
-					.attr("height", height + margin.top + margin.bottom)
-					.append("g")
-					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-				var dayLabels = svg.selectAll(".dayLabel")
-					.data(days)
-					.enter().append("text")
-					.text(function (d) { return d; })
-					.attr("x", 0)
-					.attr("y", function (d, i) { return i * gridSize; })
-					.style("text-anchor", "end")
-					.attr("transform", "translate(-6," + gridSize / 1.5 + ")")
-					.attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
+                var dayLabels = svg.selectAll(".dayLabel")
+                    .data(days)
+                    .enter().append("text")
+                    .text(function (d) { return d; })
+                    .attr("x", 0)
+                    .attr("y", function (d, i) { return i * gridSize; })
+                    .style("text-anchor", "end")
+                    .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
+                    .attr("class", function (d, i) { return ((i >= 0 && i <= 4) ? "dayLabel mono axis axis-workweek" : "dayLabel mono axis"); });
 
-				var timeLabels = svg.selectAll(".timeLabel")
-					.data(times)
-					.enter().append("text")
-					.text(function(d) { return d; })
-					.attr("x", function(d, i) { return i * gridSize; })
-					.attr("y", 0)
-					.style("text-anchor", "middle")
-					.attr("transform", "translate(" + gridSize / 2 + ", -6)")
-					.attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
+                var timeLabels = svg.selectAll(".timeLabel")
+                    .data(times)
+                    .enter().append("text")
+                    .text(function(d) { return d; })
+                    .attr("x", function(d, i) { return i * gridSize; })
+                    .attr("y", 0)
+                    .style("text-anchor", "middle")
+                    .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+                    .attr("class", function(d, i) { return ((i >= 7 && i <= 16) ? "timeLabel mono axis axis-worktime" : "timeLabel mono axis"); });
 
-				var test = svg.selectAll(".hour")
-					.data(emptyobj)
-					.enter().append("rect")
-					.attr("x", function(d) { return (d.time) * gridSize; })
-					.attr("y", function(d) { return (d.weekday) * gridSize; })
-					.attr("rx", 4)
-					.attr("ry", 4)
-					.attr("class", "bordered")
-					.attr("width", gridSize)
-					.attr("height", gridSize)
-					.style("fill", colors[0]);
+                var test = svg.selectAll(".hour")
+                    .data(emptyobj)
+                    .enter().append("rect")
+                    .attr("x", function(d) { return (d.time) * gridSize; })
+                    .attr("y", function(d) { return (d.weekday) * gridSize; })
+                    .attr("rx", 4)
+                    .attr("ry", 4)
+                    .attr("class", "bordered")
+                    .attr("width", gridSize)
+                    .attr("height", gridSize)
+                    .style("fill", colors[0]);
 
-				var heatMap = svg.selectAll(".hour")
-				  .data(lastweekdata)
-				  .enter().append("rect")
-				  .attr("x", function(d) { return (d.time - 1) * gridSize; })
-				  .attr("y", function(d) { return (d.weekday) * gridSize; })
-				  .attr("rx", 4)
-				  .attr("ry", 4)
-				  .attr("class", "hour bordered")
-				  .attr("width", gridSize)
-				  .attr("height", gridSize)
-				  .style("fill", colors[0]);
+                var heatMap = svg.selectAll(".hour")
+                  .data(lastweekdata)
+                  .enter().append("rect")
+                  .attr("x", function(d) { return (d.time - 1) * gridSize; })
+                  .attr("y", function(d) { return (d.weekday) * gridSize; })
+                  .attr("rx", 4)
+                  .attr("ry", 4)
+                  .attr("class", "hour bordered")
+                  .attr("width", gridSize)
+                  .attr("height", gridSize)
+                  .style("fill", colors[0]);
 
-				heatMap.transition().duration(1000)
-				  .style("fill", function(d) { return colorScale(d.moisture); });
+                heatMap.transition().duration(1000)
+                  .style("fill", function(d) { return colorScale(d.moisture); });
 
-				heatMap.append("title").text(function(d) { return d.moisture; });
-				  
-				var legend = svg.selectAll(".legend")
-				  .data([0].concat(colorScale.quantiles()), function(d) { return d; })
-				  .enter().append("g")
-				  .attr("class", "legend");
+                heatMap.append("title").text(function(d) { return d.moisture; });
+                  
+                var legend = svg.selectAll(".legend")
+                  .data([0].concat(colorScale.quantiles()), function(d) { return d; })
+                  .enter().append("g")
+                  .attr("class", "legend");
 
-				legend.append("rect")
-				.attr("x", function(d, i) { return legendElementWidth * i; })
-				.attr("y", height)
-				.attr("width", legendElementWidth)
-				.attr("height", gridSize / 2)
-				.style("fill", function(d, i) { return colors[i]; });
+                legend.append("rect")
+                .attr("x", function(d, i) { return legendElementWidth * i; })
+                .attr("y", height)
+                .attr("width", legendElementWidth)
+                .attr("height", gridSize / 2)
+                .style("fill", function(d, i) { return colors[i]; });
 
-				legend.append("text")
-				.attr("class", "mono")
-				.text(function(d) { return "≥ " + Math.round(d); })
-				.attr("x", function(d, i) { return legendElementWidth * i; })
-				.attr("y", height + gridSize);
+                legend.append("text")
+                .attr("class", "mono")
+                .text(function(d) { return "≥ " + Math.round(d); })
+                .attr("x", function(d, i) { return legendElementWidth * i; })
+                .attr("y", height + gridSize);
 
-		});
-		</script>
-	</body>
+        });
+        </script>
+    </body>
 </html>
