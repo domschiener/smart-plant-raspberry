@@ -2,6 +2,8 @@
 
 This is a project that intends to make your plant smarter (and perhaps prettier, if you start watering more regularly). With a Raspberry Pi, a Moisture Sensor and this software we are able to track our plants needs for water in regular intervals and even communicate with it through Twitter. The purpose of this project is it to make it easier for some of the busy people out there to water their plants. 
 
+![alt tag](http://i.imgur.com/c60yPD5.png)
+
 ## Prerequisites
 
 **Hardware:**
@@ -74,6 +76,8 @@ sudo python testversion.py
 ```
 
 And the output should look something like this:
+
+![alt tag](http://i.imgur.com/1xHUtm7.png)
 
 Now copy the contents of smart-plant-raspberry to your /var/www folder and you should be ready to go. Last thing to change is the permissions, which are quickly changed:
 ```
