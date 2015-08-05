@@ -14,7 +14,7 @@ This is a project that intends to make your plant smarter (and perhaps prettier,
 
 ## Tutorial
 
-Here is a comprehensive Tutorial on setting it all up: 
+**Here is a comprehensive Tutorial on setting it all up, I encourage you to check it out if you want to set this up: http://axiomiro.com/smart-plant-tutorial-for-your-raspberry-pi/**
 
 ## How it works
 On the Python side, we have a wrapper function in main.py which creates two asynchonously running processes through the multiprocessing library. These processes are twitter.py and getdata.py. twitter.py is there to continuously check for new Tweets to our plant so that once we send a tweet to our plant it can respond with the current moisture data and tell its owner (you) how it's feeling. getdata.py collects data of your plant in 30 minutes cycles and saves it to data.csv.
