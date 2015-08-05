@@ -25,7 +25,7 @@ function lastWatered(dataset) {
     //finds an outlier, which is defined by varying from the average by 80
     //the result is of course just an approximation of when you have last watered
     for (i = 0; i < upperlimit; i += 3) {
-        if (Math.max.apply(Math, entries.slice(i,i+3)) - Math.min.apply(Math, entries.slice(i,i+3)) > 80) {
+        if (Math.max.apply(Math, entries.slice(i,i+3)) - Math.min.apply(Math, entries.slice(i,i+3)) > 120) {
             return dataset[dataset.length - 1 - i].date + ' ' + dataset[dataset.length - 1 - i].time;
         }
     }
