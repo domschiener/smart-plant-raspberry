@@ -45,7 +45,7 @@ class collectData(object):
             self.time = datetime.datetime.now().strftime("%H:%M")
             self.weekday = datetime.datetime.today().weekday()
           		    
-            if self.percent < 30:
+            if self.percent > 70:
                 message = "Hey %s, my water level is at %d, please water me" % (mymaintwitter, self.percent)
                 twitter.twitter().tweet(message)
                 continue
